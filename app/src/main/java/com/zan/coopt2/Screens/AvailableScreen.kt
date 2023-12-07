@@ -26,7 +26,7 @@ import com.zan.coopt2.R
  * The layout is centered both vertically and horizontally on the screen.
  */
 @Composable
-fun AvailableScreen() {
+fun AvailableScreen(network: String) {
     Box(
         modifier = Modifier.fillMaxSize().background(color = Color(0xFF208733)),
         contentAlignment = Alignment.Center
@@ -44,7 +44,7 @@ fun AvailableScreen() {
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text = "Connected to the internet!",
+                text = "Connected to the internet! to $network",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White

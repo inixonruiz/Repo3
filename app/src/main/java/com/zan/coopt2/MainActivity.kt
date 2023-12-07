@@ -13,6 +13,10 @@ import com.zan.coopt2.Helper.currentConnectivityStatus
 import com.zan.coopt2.Helper.observeConnectivityAsFlow
 import com.zan.coopt2.Screens.AvailableScreen
 import com.zan.coopt2.Screens.UnavailableScreen
+//added
+import android.content.Context
+import android.net.wifi.WifiInfo
+import android.net.wifi.WifiManager
 
 /**
  * The main activity for the application. It sets up the Composable UI and checks connectivity status.
@@ -27,6 +31,22 @@ class MainActivity : ComponentActivity() {
 }
 
 /**
+ * A Composable function to check the name of the Wi-Fi network connection.
+ */
+
+@Composable
+fun currentWifiNetworkName(): State<String> {
+    val currentContext = LocalContext.current
+
+    return produceState(initialValue = "") {
+        val wifiManager = currentContext.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val wifiInfo: WifiInfo? = wifiManager.connectionInfo
+        val networkName = wifiInfo?.ssid ?: ""
+        value = networkName.removeSurrounding("\"") // Removes surrounding quotes from SSID if present
+    }
+}
+
+/**
  * A Composable function to check the connectivity status and display the appropriate screen.
  */
 @Composable
@@ -36,7 +56,8 @@ fun checkConnectivityStatus() {
     val isConnected = connection === ConnectionStatus.Available
 
     if (isConnected) {
-        AvailableScreen()
+        val network = currentWifiNetworkName()
+        AvailableScreen(network.value)
     } else {
         UnavailableScreen()
     }
@@ -54,3 +75,4 @@ fun connectivityStatus(): State<ConnectionStatus> {
         currentContext.observeConnectivityAsFlow().collect { value = it }
     }
 }
+
